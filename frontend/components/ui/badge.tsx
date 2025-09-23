@@ -17,12 +17,12 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        success: "bg-green-500 text-green-100 border-none",
-        failed: "bg-red-500 text-red-100 border-none",
-        pending: "bg-yellow-500 text-yellow-100 border-none",
-        buy: "bg-green-500 text-green-100 border-none",
-        sell: "bg-red-500 text-red-100 border-none",
-        hold: "bg-yellow-500 text-yellow-100 border-none",
+        buy: "bg-green-600 text-green-100 border-none",
+        sell: "bg-red-600 text-red-100 border-none",
+        hold: "bg-amber-600 text-amber-100 border-none",
+        success: "bg-emerald-600 text-emerald-100 border-none",
+        failed: "bg-rose-600 text-rose-100 border-none",
+        pending: "bg-yellow-600 text-yelow-100 border-none",
       },
     },
     defaultVariants: {
