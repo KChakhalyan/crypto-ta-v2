@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "crypto-ta"
+version = "0.1.0"
+description = "Crypto Technical Analysis Backend"
+authors = ["You"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111"
+uvicorn = {extras = ["standard"], version = "^0.30"}
+sqlalchemy = "^2.0"
+psycopg2-binary = "^2.9"
+alembic = "^1.13"
+pydantic = "^2.8"
+pydantic-settings = "^2.4"
+ccxt = "^4.3"
+pandas = "^2.2"
+numpy = "^2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3"

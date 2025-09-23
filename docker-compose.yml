@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:15
+    container_name: crypto_db
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - crypto_net
+
+  backend:
+    build: ./backend
+    container_name: crypto_backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - crypto_net
+
+  frontend:
+    build: ./frontend
+    container_name: crypto_frontend
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env.local
+    environment:
+      NEXT_PUBLIC_WS_BASE: ws://localhost:8000
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - crypto_net
+
+volumes:
+  db_data:
+
+networks:
+  crypto_net:
+    driver: bridge
