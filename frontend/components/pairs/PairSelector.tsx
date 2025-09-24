@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
 
 interface PairSelectorProps {
   pairs: string[];
@@ -152,21 +153,6 @@ export function PairSelector({ pairs, onSelect }: PairSelectorProps) {
             {pair}
           </Badge>
         ))}
-      </div>
-
-      {/* All pairs — занимает остаток высоты и скроллится */}
-      <div className="flex-1 min-h-0 flex flex-col">
-        <h3 className="text-sm font-semibold mb-2">All Pairs</h3>
-        <ScrollArea className="flex-1 min-h-0 rounded-md border p-2">
-          <div className="space-y-2">
-            {pairs.map((pair) => (
-              <React.Fragment key={pair}>
-                <div className="text-sm">{pair}</div>
-                <Separator className="my-2" />
-              </React.Fragment>
-            ))}
-          </div>
-        </ScrollArea>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import type { Analysis } from "@/types/analysis";
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { PairSelector } from "@/components/pairs/PairSelector";
+import { PairOverview } from "@/components/pairs/PairOverview";
+import { LastAnalyses } from "@/components/analysis/LastAnalyses";
 
 export default function Page() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -33,7 +35,7 @@ export default function Page() {
         </div>
 
         {/* ПРАВАЯ: селектор + списки */}
-        <div className="bg-muted/90 rounded-xl h-[calc(100vh-200px)] p-2 flex flex-col min-h-0 overflow-hidden">
+        <div className="bg-muted/90 rounded-xl h-[calc(100vh-200px)] flex flex-col min-h-0 overflow-hidden">
           <PairSelector
             pairs={[
               "BTCUSDT",
@@ -52,6 +54,9 @@ export default function Page() {
             ]}
             onSelect={setSelectedPair}
           />
+          <PairOverview pair={selectedPair} />
+
+          <LastAnalyses pair={selectedPair} />
         </div>
       </div>
     </div>
