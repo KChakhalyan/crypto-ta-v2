@@ -19,9 +19,14 @@ export const columns: ColumnDef<Analysis>[] = [
   {
     accessorKey: "target_price",
     header: "Target Price",
-    cell: ({ row }) => (
-      <div className="text-right">{row.original.target_price.toFixed(2)}</div>
-    ),
+    cell: ({ row }) => {
+      const value = row.original.target_price;
+      return (
+        <div className="text-right">
+          {value !== null ? value.toFixed(2) : "—"}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "created_at",

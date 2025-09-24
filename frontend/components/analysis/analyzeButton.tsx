@@ -3,41 +3,37 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { Analysis } from "@/types/analysis";
+import { generateMockAnalysis, type MockParams } from "@/lib/mock";
 
-interface AnalyzeButtonProps {
+type Props = {
   onResult: (result: Analysis) => void;
-}
+  params?: MockParams; // ← params теперь необязателен
+};
 
-export function AnalyzeButton({ onResult }: AnalyzeButtonProps) {
+export function AnalyzeButton({ onResult, params }: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleAnalyze() {
     setLoading(true);
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/analyze/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ symbol: "BTCUSDT", interval: "1h" }),
-        }
-      );
-
-      if (!res.ok) throw new Error("Failed to analyze");
-
-      const json: Analysis = await res.json();
-      console.log("✅ Analysis result:", json);
-
-      onResult(json);
-    } catch (err) {
-      console.error("❌ Error analyzing:", err);
+      const mock = await generateMockAnalysis({
+        symbol: params?.symbol ?? "BTCUSDT",
+        interval: params?.interval ?? "1h",
+        deposit: params?.deposit ?? 1000,
+        riskPct: params?.riskPct ?? 1,
+      });
+      onResult(mock);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <Button onClick={handleAnalyze} disabled={loading} className="w-full">
+    <Button
+      onClick={handleAnalyze}
+      disabled={loading}
+      className="w-full md:w-auto"
+    >
       {loading ? "Analyzing..." : "Analyze"}
     </Button>
   );

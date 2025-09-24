@@ -1,77 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/analysis/data-table";
-import { Analysis } from "@/types/analysis";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import type { Analysis } from "@/types/analysis";
+import { AnalysisCardPro } from "@/components/analysis/analysis-card-pro";
+import { AnalyzeButton } from "@/components/analysis/analyzeButton";
+import {
+  AnalysisForm,
+  type AnalysisFormState,
+} from "@/components/analysis/analysis-form";
+import TradingViewWidget from "@/app/charts/TradingViewWidget";
 
 export default function AnalysisReportPage() {
-  const [data, setData] = useState<Analysis[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE}/api/analysis`
-        );
-        if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error("❌ Error fetching analysis:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  const columns: ColumnDef<Analysis>[] = [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "symbol", header: "Symbol" },
-    { accessorKey: "interval", header: "Interval" },
-    {
-      accessorKey: "signal",
-      header: "Signal",
-      cell: ({ row }) => {
-        const value = String(row.getValue("signal")).toLowerCase() as
-          | "buy"
-          | "sell"
-          | "hold";
-
-        return <Badge variant={value}>{value.toUpperCase()}</Badge>;
-      },
-    },
-    { accessorKey: "target_price", header: "Target Price" },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const value = String(row.getValue("status")).toLowerCase() as
-          | "success"
-          | "failed"
-          | "pending";
-
-        return <Badge variant={value}>{value.toUpperCase()}</Badge>;
-      },
-    },
-    {
-      accessorKey: "created_at",
-      header: "Created At",
-      cell: ({ row }) => new Date(row.getValue("created_at")).toLocaleString(),
-    },
-  ];
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [form, setForm] = useState<AnalysisFormState>({
+    symbol: "BTCUSDT",
+    interval: "1h",
+    deposit: 1000,
+    riskPct: 1,
+  });
 
   return (
-    <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Analysis Reports</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <DataTable data={data} columns={columns} />
-      )}
-    </main>
+    <div className="flex flex-col gap-4 p-4">
+      {/* Controls */}
+      <div className="flex flex-col gap-3">
+        <AnalysisForm value={form} onChange={setForm} />
+        <div>
+          <AnalyzeButton
+            params={{
+              symbol: form.symbol,
+              interval: form.interval,
+              deposit: form.deposit,
+              riskPct: form.riskPct,
+            }}
+            onResult={setAnalysis}
+          />
+        </div>
+      </div>
+
+      {/* Detailed card */}
+      <AnalysisCardPro data={analysis} />
+
+      {/* Chart */}
+      {/* <div className="rounded-xl bg-muted/30 p-2">
+        <TradingViewWidget symbol="BTCUSDT" interval="60" />
+      </div> */}
+    </div>
   );
 }

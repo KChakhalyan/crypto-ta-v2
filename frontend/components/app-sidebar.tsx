@@ -139,18 +139,18 @@ const data = {
   ],
   projects: [
     {
-      name: "Analysis Report",
-      url: "/analysis-report",
+      name: "Main",
+      url: "/",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
+      name: "Reports",
+      url: "/reports",
       icon: PieChart,
     },
     {
-      name: "Travel",
-      url: "#",
+      name: "Analysis Tool",
+      url: "/analysis-report",
       icon: Map,
     },
   ],
