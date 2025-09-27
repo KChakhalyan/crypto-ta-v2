@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Star } from "lucide-react";
+import { ChevronsUpDown, Star, ListFilter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -18,9 +18,6 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Card } from "@/components/ui/card";
 
 interface PairSelectorProps {
   pairs: string[];
@@ -32,10 +29,7 @@ const initialFavorites = [
   "ETHUSDT",
   "BNBUSDT",
   "XRPUSDT",
-  "SOLUSDT",
   "ADAUSDT",
-  "DOGEUSDT",
-  "DOTUSDT",
 ];
 
 export function PairSelector({ pairs, onSelect }: PairSelectorProps) {
@@ -56,8 +50,12 @@ export function PairSelector({ pairs, onSelect }: PairSelectorProps) {
   };
 
   return (
-    <div className="w-full h-full min-h-0 flex flex-col space-y-3 bg-white p-2 rounded-md">
-      {/* Текущая выбранная пара */}
+    <section className="space-y-3">
+      <h3 className="text-base font-semibold flex items-center gap-2">
+        <ListFilter className="h-4 w-4" /> Pairs
+      </h3>
+
+      {/* Combobox */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -75,35 +73,6 @@ export function PairSelector({ pairs, onSelect }: PairSelectorProps) {
             <CommandInput placeholder="Search pairs..." />
             <CommandEmpty>No pair found.</CommandEmpty>
             <CommandList className="max-h-[250px] overflow-y-auto">
-              <CommandGroup heading="Favorites">
-                {favorites.map((pair) => (
-                  <CommandItem
-                    key={pair}
-                    value={pair}
-                    onSelect={() => handleSelect(pair)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selected === pair ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {pair}
-                    <Star
-                      className={cn(
-                        "ml-auto h-4 w-4 cursor-pointer",
-                        favorites.includes(pair)
-                          ? "text-yellow-500 fill-yellow-500"
-                          : "opacity-40"
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFavorite(pair);
-                      }}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
               <CommandGroup heading="All Pairs">
                 {pairs.map((pair) => (
                   <CommandItem
@@ -111,12 +80,6 @@ export function PairSelector({ pairs, onSelect }: PairSelectorProps) {
                     value={pair}
                     onSelect={() => handleSelect(pair)}
                   >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selected === pair ? "opacity-100" : "opacity-0"
-                      )}
-                    />
                     {pair}
                     <Star
                       className={cn(
@@ -154,6 +117,6 @@ export function PairSelector({ pairs, onSelect }: PairSelectorProps) {
           </Badge>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

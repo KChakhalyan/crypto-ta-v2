@@ -1,15 +1,13 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart2 } from "lucide-react";
 
 interface PairOverviewProps {
   pair: string;
 }
 
 export function PairOverview({ pair }: PairOverviewProps) {
-  // пока моковые данные (потом подтянем с Binance API)
   const mock = {
     price: 30125.42,
     change24h: -1.32,
@@ -19,11 +17,11 @@ export function PairOverview({ pair }: PairOverviewProps) {
   const isUp = mock.change24h >= 0;
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{pair} Overview</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3 text-sm">
+    <section className="space-y-3">
+      <h3 className="text-base font-semibold flex items-center gap-2">
+        <BarChart2 className="h-4 w-4" /> {pair} Overview
+      </h3>
+      <div className="space-y-2 text-sm">
         <div className="flex items-center justify-between">
           <span>Price</span>
           <span className="font-semibold">${mock.price.toLocaleString()}</span>
@@ -46,7 +44,7 @@ export function PairOverview({ pair }: PairOverviewProps) {
           <span>24h Volume</span>
           <span>{(mock.volume24h / 1_000_000).toFixed(2)}M</span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
