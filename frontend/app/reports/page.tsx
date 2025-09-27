@@ -4,72 +4,40 @@ import { useEffect, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/analysis/data-table";
 import { Badge } from "@/components/ui/badge";
-
-type Analysis = {
-  id: number;
-  symbol: string;
-  signal: "BUY" | "SELL";
-  entry: number;
-  stop: number;
-  targets: number[];
-  status: "PENDING" | "SUCCESS" | "FAILED";
-  created_at: string;
-};
+import { getReports } from "@/lib/api";
+import type { Analysis } from "@/types/analysis";
 
 export default function AnalysisReportPage() {
-  const [price, setPrice] = useState(29200); // стартовая цена
-  const [data, setData] = useState<Analysis[]>([
-    {
-      id: 1,
-      symbol: "BTCUSDT",
-      signal: "BUY",
-      entry: 29200,
-      stop: 28900,
-      targets: [29500, 29700],
-      status: "PENDING",
-      created_at: new Date().toISOString(),
-    },
-  ]);
+  const [data, setData] = useState<Analysis[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // имитация движения цены
+  const fetchReports = async () => {
+    try {
+      setLoading(true);
+      const reports = await getReports();
+      setData(reports);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPrice((p) => p + (Math.random() > 0.5 ? 50 : -50));
-    }, 2000);
-    return () => clearInterval(interval);
+    fetchReports(); // Fetch immediately on mount
+
+    const intervalId = setInterval(fetchReports, 5000); // Poll every 5 seconds
+
+    return () => clearInterval(intervalId); // Clear interval on unmount
   }, []);
-
-  // обновление статуса
-  useEffect(() => {
-    setData((prev) =>
-      prev.map((a) => {
-        if (a.status !== "PENDING") return a;
-
-        if (a.signal === "BUY") {
-          if (price <= a.stop) return { ...a, status: "FAILED" };
-          if (a.targets.some((t) => price >= t))
-            return { ...a, status: "SUCCESS" };
-        } else {
-          if (price >= a.stop) return { ...a, status: "FAILED" };
-          if (a.targets.some((t) => price <= t))
-            return { ...a, status: "SUCCESS" };
-        }
-        return { ...a, status: "PENDING" };
-      })
-    );
-  }, [price]);
 
   const columns: ColumnDef<Analysis>[] = [
     { accessorKey: "id", header: "ID" },
     { accessorKey: "symbol", header: "Symbol" },
+    { accessorKey: "interval", header: "Interval" },
     { accessorKey: "signal", header: "Signal" },
-    { accessorKey: "entry", header: "Entry" },
-    { accessorKey: "stop", header: "Stop" },
-    {
-      accessorKey: "targets",
-      header: "Targets",
-      cell: ({ row }) => row.original.targets.join(" / "),
-    },
+    { accessorKey: "target_price", header: "Target Price" },
     {
       accessorKey: "status",
       header: "Status",
@@ -98,12 +66,12 @@ export default function AnalysisReportPage() {
     },
   ];
 
+  if (loading) return <main className="p-6 space-y-4">Loading reports...</main>;
+  if (error) return <main className="p-6 space-y-4">Error: {error}</main>;
+
   return (
     <main className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Analysis Reports</h1>
-      <p className="text-lg">
-        Current Price: <b>{price}</b>
-      </p>
       <DataTable data={data} columns={columns} />
     </main>
   );

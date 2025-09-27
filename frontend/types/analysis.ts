@@ -28,8 +28,8 @@ export interface TABlock {
 }
 
 export interface DerivsBlock {
-  funding_8h: number; // %
-  oi_change_24h: number; // %
+  funding_rate: number; // %
+  open_interest: number; // %
   liq_nearby?: { price: number; side: "long" | "short"; size: number }[];
 }
 

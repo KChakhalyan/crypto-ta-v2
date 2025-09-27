@@ -38,7 +38,15 @@ export default function Page() {
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         <div className="bg-muted/50 rounded-xl md:col-span-3 h-[300px] overflow-hidden flex">
           <div className="p-4 w-[200px] flex items-center justify-center">
-            <AnalyzeButton onResult={setAnalysis} />
+            <AnalyzeButton
+              params={{
+                symbol: selectedPair,
+                interval: "1h", // Default interval for the main page
+                deposit: 1000, // Default value, not used by backend but required by prop type
+                riskPct: 1, // Default value, not used by backend but required by prop type
+              }}
+              onResult={setAnalysis}
+            />
           </div>
           <Separator orientation="vertical" />
           <div className="p-4 w-full">

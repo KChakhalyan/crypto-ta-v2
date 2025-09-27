@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getReports, runAnalysis, Report, getPairs, Pair } from "@/lib/api";
+import { getReports, runAnalysis, getPairs, Pair } from "@/lib/api";
+import type { Analysis } from "@/types/analysis";
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function SignalsPage() {
-  const [reports, setReports] = useState<Report[]>([]);
+  const [reports, setReports] = useState<Analysis[]>([]);
   const [pairs, setPairs] = useState<Pair[]>([]);
   const [loading, setLoading] = useState(true);
   const [symbol, setSymbol] = useState("");
@@ -38,7 +39,7 @@ export default function SignalsPage() {
     if (!symbol) return;
     setRunning(true);
     try {
-      const newReport = await runAnalysis(symbol, timeframe);
+      const newReport = await runAnalysis(symbol, timeframe, 1000, 1); // Placeholder values for deposit and riskPct
       setReports((prev) => [...prev, newReport]);
     } catch (err) {
       console.error(err);
@@ -87,11 +88,9 @@ export default function SignalsPage() {
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Symbol</TableHead>
-            <TableHead>Timeframe</TableHead>
-            <TableHead>Signal</TableHead>
-            <TableHead>RSI</TableHead>
-            <TableHead>EMA50</TableHead>
-            <TableHead>EMA200</TableHead>
+            <TableHead>Interval</TableHead>
+            <TableHead>Target Price</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
           </TableRow>
         </TableHeader>
@@ -100,21 +99,9 @@ export default function SignalsPage() {
             <TableRow key={r.id}>
               <TableCell>{r.id}</TableCell>
               <TableCell>{r.symbol}</TableCell>
-              <TableCell>{r.timeframe}</TableCell>
-              <TableCell>
-                {r.signal === "BUY" && (
-                  <span className="text-green-600">🟢 BUY</span>
-                )}
-                {r.signal === "SELL" && (
-                  <span className="text-red-600">🔴 SELL</span>
-                )}
-                {r.signal === "HOLD" && (
-                  <span className="text-gray-500">⏸ HOLD</span>
-                )}
-              </TableCell>
-              <TableCell>{r.indicators.rsi}</TableCell>
-              <TableCell>{r.indicators.ema50}</TableCell>
-              <TableCell>{r.indicators.ema200}</TableCell>
+              <TableCell>{r.interval}</TableCell>
+              <TableCell>{r.target_price}</TableCell>
+              <TableCell>{r.status}</TableCell>
               <TableCell>{new Date(r.created_at).toLocaleString()}</TableCell>
             </TableRow>
           ))}

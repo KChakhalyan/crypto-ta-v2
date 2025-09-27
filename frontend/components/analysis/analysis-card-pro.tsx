@@ -113,7 +113,7 @@ export function AnalysisCardPro({ data }: { data: Analysis | null }) {
               k="Targets"
               v={(data.risk?.targets ?? []).map(fmt).join(" / ") || "—"}
             />
-            <KV k="R:R" v={data.risk ? data.risk.rr.toFixed(2) : "—"} />
+            <KV k="R:R" v={data.risk?.rr?.toFixed(2) || "—"} />
             <KV
               k="Size"
               v={data.risk ? String(data.risk.position_size) : "—"}
@@ -133,7 +133,7 @@ export function AnalysisCardPro({ data }: { data: Analysis | null }) {
           <KV
             k="MACD"
             v={
-              data.ta
+              data.ta?.macd
                 ? `${num(data.ta.macd.line)} / ${num(
                     data.ta.macd.signal
                   )} (${num(data.ta.macd.hist)})`
@@ -145,7 +145,7 @@ export function AnalysisCardPro({ data }: { data: Analysis | null }) {
           <KV
             k="MA(20/50/200)"
             v={
-              data.ta
+              data.ta?.ma
                 ? `${num(data.ta.ma.ma20)} / ${num(data.ta.ma.ma50)} / ${num(
                     data.ta.ma.ma200
                   )}`
@@ -160,8 +160,8 @@ export function AnalysisCardPro({ data }: { data: Analysis | null }) {
         {/* Derivatives snapshot */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           <H3>Derivatives</H3>
-          <KV k="Funding 8h" v={pct(data.derivs?.funding_8h)} />
-          <KV k="OI Δ 24h" v={pct(data.derivs?.oi_change_24h)} />
+          <KV k="Funding Rate" v={pct(data.derivs?.funding_rate)} />
+          <KV k="Open Interest" v={num(data.derivs?.open_interest)} />
           <KV
             k="Nearest Liq"
             v={

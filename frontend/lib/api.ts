@@ -1,11 +1,5 @@
-export interface Report {
-  id: number;
-  symbol: string;
-  timeframe: string;
-  signal: string;
-  indicators: Record<string, number>;
-  created_at: string;
-}
+import type { Analysis } from "@/types/analysis";
+
 export interface Pair {
   symbol: string;
 }
@@ -23,7 +17,7 @@ export async function getPairs(
 }
 
 // 🔹 Получить отчёты
-export async function getReports(limit: number = 50): Promise<Report[]> {
+export async function getReports(limit: number = 50): Promise<Analysis[]> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASE}/api/reports?limit=${limit}`
   );
@@ -31,13 +25,13 @@ export async function getReports(limit: number = 50): Promise<Report[]> {
   return response.json();
 }
 
-export async function runAnalysis(symbol: string, timeframe: string = "1h") {
+export async function runAnalysis(symbol: string, interval: string, deposit: number, riskPct: number) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE}/api/analyze`,
+    `${process.env.NEXT_PUBLIC_API_BASE}/api/analysis`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ symbol, timeframe }),
+      body: JSON.stringify({ symbol, interval, deposit, riskPct }),
     }
   );
 

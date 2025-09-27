@@ -20,6 +20,14 @@ import {
 import { TrendingUp, TrendingDown, MinusCircle } from "lucide-react";
 import type { Analysis } from "@/types/analysis";
 
+const num = (n?: number) =>
+  n == null ? "—" : String(Number.isFinite(n) ? +n.toFixed(2) : n);
+const pct = (n?: number) => (n == null ? "—" : `${(+n).toFixed(2)}%`);
+const fmt = (n?: number) =>
+  n == null ? "—" : new Intl.NumberFormat().format(n);
+const money = (n?: number) =>
+  n == null ? "—" : `$${new Intl.NumberFormat().format(+n.toFixed(2))}`;
+
 function SignalIcon({ signal }: { signal: Analysis["signal"] }) {
   if (signal === "buy") return <TrendingUp className="h-4 w-4 mr-1.5" />;
   if (signal === "sell") return <TrendingDown className="h-4 w-4 mr-1.5" />;
@@ -80,8 +88,7 @@ export function AnalysisCard({ analysis }: { analysis: Analysis | null }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <span>Entry: {analysis.risk.entry}</span>
               <span>Stop: {analysis.risk.stop}</span>
-              <span>Size: {analysis.risk.position_size}</span>
-              <span>Targets: {analysis.risk.targets.join(", ")}</span>
+              <span>Targets: {(analysis.risk.targets ?? []).join(", ")}</span>
               <span>Max Loss: ${analysis.risk.max_loss}</span>
               <span>Max Win: ${analysis.risk.max_win}</span>
               <span>R:R {analysis.risk.rr}</span>
@@ -120,7 +127,7 @@ export function AnalysisCard({ analysis }: { analysis: Analysis | null }) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <span>Entry: {analysis.risk.entry}</span>
                   <span>Stop: {analysis.risk.stop}</span>
-                  <span>Targets: {analysis.risk.targets.join(", ")}</span>
+                  <span>Targets: {(analysis.risk.targets ?? []).join(", ")}</span>
                   <span>R:R {analysis.risk.rr}</span>
                   <span>Max Loss: ${analysis.risk.max_loss}</span>
                   <span>Max Win: ${analysis.risk.max_win}</span>
@@ -135,20 +142,16 @@ export function AnalysisCard({ analysis }: { analysis: Analysis | null }) {
               <section>
                 <h3 className="font-semibold mb-2">Technical</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <span>RSI: {analysis.ta.rsi}</span>
+                  <span>RSI: {analysis.ta?.rsi || "—"}</span>
                   <span>
-                    MACD: {analysis.ta.macd.line} / {analysis.ta.macd.signal} (
-                    {analysis.ta.macd.hist})
+                    MACD: {analysis.ta?.macd ? `${analysis.ta.macd.line} / ${analysis.ta.macd.signal} (${analysis.ta.macd.hist})` : "—"}
                   </span>
-                  <span>ATR: {analysis.ta.atr}</span>
+                  <span>ATR: {analysis.ta?.atr || "—"}</span>
                   <span>
-                    MA: {analysis.ta.ma.ma20} / {analysis.ta.ma.ma50} /{" "}
-                    {analysis.ta.ma.ma200}
+                    MA: {analysis.ta?.ma ? `${analysis.ta.ma.ma20} / ${analysis.ta.ma.ma50} / ${analysis.ta.ma.ma200}` : "—"}
                   </span>
-                  <span>Bias: {analysis.ta.ma.bias}</span>
-                  {analysis.ta.pattern && (
-                    <span>Pattern: {analysis.ta.pattern}</span>
-                  )}
+                  <span>Bias: {analysis.ta?.ma?.bias || "—"}</span>
+                  <span>Pattern: {analysis.ta?.pattern || "—"}</span>
                 </div>
               </section>
             )}
@@ -158,8 +161,8 @@ export function AnalysisCard({ analysis }: { analysis: Analysis | null }) {
               <section>
                 <h3 className="font-semibold mb-2">Derivatives</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <span>Funding 8h: {analysis.derivs.funding_8h}%</span>
-                  <span>OI Δ 24h: {analysis.derivs.oi_change_24h}%</span>
+                  <span>Funding Rate: {pct(analysis.derivs?.funding_rate)}</span>
+                  <span>Open Interest: {num(analysis.derivs?.open_interest)}</span>
                   {analysis.derivs.liq_nearby?.length && (
                     <span>
                       Nearest Liq: {analysis.derivs.liq_nearby[0].side} @{" "}
@@ -176,12 +179,8 @@ export function AnalysisCard({ analysis }: { analysis: Analysis | null }) {
                 <h3 className="font-semibold mb-2">On-chain</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <span>Netflow 24h: {analysis.onchain.netflow_24h}</span>
-                  {analysis.onchain.sopr && (
-                    <span>SOPR: {analysis.onchain.sopr}</span>
-                  )}
-                  {analysis.onchain.nupl && (
-                    <span>NUPL: {analysis.onchain.nupl}</span>
-                  )}
+                  <span>SOPR: {analysis.onchain.sopr}</span>
+                  <span>NUPL: {analysis.onchain.nupl}</span>
                 </div>
               </section>
             )}
